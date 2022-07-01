@@ -50,4 +50,12 @@
   button {
     margin-left: auto;
   }
+  span {
+    font-size: 2rem;
+    font-weight: bold;
+    span {
+      color: var(--yellow-500);
+      font-weight: normal;
+    }
+  }
 }
