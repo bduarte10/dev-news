@@ -1,39 +1,47 @@
-import { query } from "faunadb"
-import NextAuth from "next-auth"
-import GithubProvider from "next-auth/providers/github"
-query
+import { query } from 'faunadb';
+import NextAuth from 'next-auth';
+import GithubProvider from 'next-auth/providers/github';
+query;
 
-import {fauna} from '../../../services/fauna'
+import { fauna } from '../../../services/fauna';
 
 export default NextAuth({
   providers: [
     GithubProvider({
       clientId: process.env.GITHUB_CLIENT_ID,
       clientSecret: process.env.GITHUB_CLIENT_SECRET,
-      authorization: { params: { scope: "read:user"} },
+      authorization: { params: { scope: 'read:user' } },
     }),
   ],
 
   callbacks: {
     async signIn({ user }) {
-      const {email} = user;
-      try{
+      const { email } = user;
+      try {
         await fauna.query(
-          query.Create(
-            query.Collection('users'),
-            {data: {email}}
+          query.If(
+            query.Not(
+              query.Exists(
+                query.Match(
+                  query.Index('users_by_email'),
+                  query.Casefold(user.email)
+                )
+              )
+            ),
+            query.Create(query.Collection('users'), { data: { email } }),
+            query.Get(
+              query.Match(
+                query.Index('users_by_email'),
+                query.Casefold(user.email)
+              )
+            )
           )
-  
-        )
-        return true
-      }catch{
+        );
+        return true;
+      } catch (err) {
+        console.log(err);
         return false;
       }
-
-      
     },
-
-
-
-  }
-})
+  },
+});
