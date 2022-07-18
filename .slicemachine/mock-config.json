@@ -1,0 +1,20 @@
+{
+  "_cts": {
+    "publication": {}
+  },
+  "slices": {
+    "Post": {
+      "default": {
+        "primary": {
+          "ContentPost": {
+            "config": {
+              "patternType": "STORY",
+              "blocks": 1
+            }
+          }
+        },
+        "items": {}
+      }
+    }
+  }
+}
